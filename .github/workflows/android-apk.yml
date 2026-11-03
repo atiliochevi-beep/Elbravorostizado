@@ -20,6 +20,8 @@ jobs:
         uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '8.9'
+      - name: Prepare business logo
+        run: base64 -d app/src/main/assets/bravo_logo.png.b64 > app/src/main/assets/bravo_logo.png
       - name: Build debug APK
         run: gradle --no-daemon assembleDebug
       - name: Upload APK
