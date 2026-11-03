@@ -3,6 +3,8 @@ package com.elbravo.facturacion
 import android.content.Context
 import android.content.Intent
 import android.graphics.Paint
+import android.graphics.BitmapFactory
+import android.graphics.Rect
 import android.graphics.pdf.PdfDocument
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -77,7 +79,10 @@ fun InvoiceScreen(ctx: Context) {
             val page = doc.startPage(PdfDocument.PageInfo.Builder(595, 842, 1).create())
             val canvas = page.canvas
             val paint = Paint()
-            var y = 50f
+            val logo = ctx.assets.open("bravo_logo.png").use { BitmapFactory.decodeStream(it) }
+            canvas.drawBitmap(logo, null, Rect(40, 28, 155, 143), paint)
+            logo.recycle()
+            var y = 165f
             fun line(value: String, size: Float = 12f) {
                 paint.textSize = size
                 canvas.drawText(value.take(90), 40f, y, paint)
