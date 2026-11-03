@@ -22,11 +22,18 @@ jobs:
           gradle-version: '8.9'
       - name: Prepare business logo
         run: base64 -d app/src/main/assets/bravo_logo.png.b64 > app/src/main/assets/bravo_logo.png
-      - name: Build debug APK
-        run: gradle --no-daemon assembleDebug
-      - name: Upload APK
+      - name: Build signed release APK
+        run: gradle --no-daemon clean assembleRelease
+      - name: Verify APK signature and alignment
+        run: |
+          APK="app/build/outputs/apk/release/app-release.apk"
+          APKSIGNER="$(find "$ANDROID_HOME/build-tools" -name apksigner | sort | tail -n 1)"
+          ZIPALIGN="$(find "$ANDROID_HOME/build-tools" -name zipalign | sort | tail -n 1)"
+          "$APKSIGNER" verify --verbose --print-certs "$APK"
+          "$ZIPALIGN" -c -v 4 "$APK"
+      - name: Upload verified APK
         uses: actions/upload-artifact@v4
         with:
           name: ElBravoFacturacion-APK
-          path: app/build/outputs/apk/debug/app-debug.apk
+          path: app/build/outputs/apk/release/app-release.apk
           if-no-files-found: error
